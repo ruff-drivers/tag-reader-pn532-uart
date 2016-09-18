@@ -1,0 +1,43 @@
+{
+  "name": "cardreader-pn532-uart",
+  "version": "0.1.0",
+  "description": "Card reader dirver using NXP `pn532` chip",
+  "author": "Nanchao Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruff-drivers/pn532-cardreader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ruff-drivers/pn532-cardreader/issues"
+  },
+  "homepage": "https://github.com/ruff-drivers/pn532-cardreader",
+  "keywords": [
+    "ruff",
+    "driver"
+  ],
+  "main": "src/index.js",
+  "engines": {
+    "ruff": ">=1.5.0 <1.6.0"
+  },
+  "scripts": {
+    "install-sdk": "rvm install --local",
+    "install-rap-dependencies": "rap install",
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "ruff ./test/test.js"
+  },
+  "devDependencies": {
+    "eslint": "^3.5.0",
+    "ruff-standard": "^0.2.1",
+    "rvm": "^0.3.2"
+  },
+  "ruff": {
+    "dependencies": {
+      "read-streaming": "*"
+    },
+    "devDependencies": {
+      "t": "^0.1.6"
+    }
+  }
+}
