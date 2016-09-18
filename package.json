@@ -6,15 +6,17 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruff-drivers/pn532-cardreader.git"
+    "url": "git+https://github.com/ruff-drivers/cardreader-pn532-uart.git"
   },
   "bugs": {
-    "url": "https://github.com/ruff-drivers/pn532-cardreader/issues"
+    "url": "https://github.com/ruff-drivers/cardreader-pn532-uart/issues"
   },
-  "homepage": "https://github.com/ruff-drivers/pn532-cardreader",
+  "homepage": "https://github.com/ruff-drivers/cardreader-pn532-uart",
   "keywords": [
     "ruff",
-    "driver"
+    "driver",
+    "nfc",
+    "pn532"
   ],
   "main": "src/index.js",
   "engines": {

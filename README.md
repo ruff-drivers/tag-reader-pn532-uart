@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/ruff-drivers/driver-template.svg)](https://travis-ci.org/ruff-drivers/driver-template)
+[![Build Status](https://travis-ci.org/ruff-drivers/cardreader-pn532-uart.svg)](https://travis-ci.org/ruff-drivers/cardreader-pn532-uart)
 
-# Card(ISO/IEC14443 Type A) reader dirver
+# Card(ISO/IEC14443 Type A) reader dirver for Ruff
 
 NFC chip `PN532` driver with UART interface.
 
@@ -48,7 +48,7 @@ Set the scan interval of the card reader, the minimal interval cannot be less th
 
 #### `card`
 
-The `card` event is issued when some card is around in the card reader.
+The `card` event is issued when some card, the type of which is `ISO/IEC14443 Type A`,  is around in the card reader.
 
 ## Contributing
 
