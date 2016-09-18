@@ -83,7 +83,6 @@ var nfc = {
                     // res = Buffer.concat([new Buffer([packetLength]), payload]);
                     res = payload;
                 }
-                // res = ((~checksum + 1) & 0xFF) === packetDataChecksum;
             }
         }
         return res ? {
