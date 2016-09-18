@@ -80,7 +80,8 @@ var nfc = {
                     }
                 }
                 if (((~checksum + 1) & 0xFF) === packetDataChecksum) {
-                    res = Buffer.concat([new Buffer([packetLength]), payload]);
+                    // res = Buffer.concat([new Buffer([packetLength]), payload]);
+                    res = payload;
                 }
                 // res = ((~checksum + 1) & 0xFF) === packetDataChecksum;
             }
@@ -140,9 +141,9 @@ var nfc = {
                 return;
             }
             var firmware = {
-                chip: responseBuffer[3],
-                version: responseBuffer[4] + responseBuffer[5] / 10,
-                support: responseBuffer[6]
+                chip: responseBuffer[2],
+                version: responseBuffer[3] + responseBuffer[4] / 10,
+                support: responseBuffer[5]
             };
             callback(undefined, firmware);
         }
@@ -182,11 +183,11 @@ var nfc = {
             }
             var card = {};
             if (responseBuffer) {
-                card.sensRes = responseBuffer.slice(5, 7);
-                card.selRes = responseBuffer.slice(7, 8);
-                card.uidLength = responseBuffer[8];
-                card.uid = responseBuffer.slice(9, 9 + card.uidLength);
-                card.ats = responseBuffer.slice(9 + card.uidLength);
+                card.sensRes = responseBuffer.slice(4, 6);
+                card.selRes = responseBuffer.slice(6, 7);
+                card.uidLength = responseBuffer[7];
+                card.uid = responseBuffer.slice(8, 8 + card.uidLength);
+                card.ats = responseBuffer.slice(8 + card.uidLength);
 
                 that.emit('card', card);
             }
@@ -224,9 +225,6 @@ module.exports = driver({
             that.cmdSamConfigNormal(next);
             that.scanCard();
         }, 500);
-        // next();
-        // this.cmdSamConfigNormal(next);
-        // this.scanCard();
     },
     exports: nfc,
     detach: function () {
