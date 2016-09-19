@@ -49,50 +49,39 @@ var nfc = {
     },
 
     _parseResponse: function (cmdId, buffer) {
-        var res;
-        var preambleIndex = indexOfBuffer(buffer, PREAMBLE);
-        if (preambleIndex >= 0) {
-            var responseBuffer = buffer.slice(preambleIndex);
-
-            var preamble = responseBuffer[0];
-            var startCode1 = responseBuffer[1];
-            var startCode2 = responseBuffer[2];
-            var packetLength = responseBuffer[3];
-            if (responseBuffer.length < (packetLength + 7)) {
-                res = null;
-            }
-            var packetLengthChecksum = responseBuffer[4];
-            var payload = responseBuffer.slice(5, 5 + packetLength);
-            var packetDataChecksum = responseBuffer[packetLength + 5];
-
-            var postamble = responseBuffer[packetLength + 6];
-            var checksum = 0;
-            if (preamble === PN532_PREAMBLE &&
-                startCode1 === PN532_STARTCODE1 && startCode2 === PN532_STARTCODE2 &&
-                ((packetLength + packetLengthChecksum) & 0xFF) === 0 &&
-                payload[0] === (PN532_HOSTTOPN532 + 1) &&
-                payload[1] === (cmdId + 1) &&  // TBD
-                postamble === 0) {
-                for (var i = 0; i < packetLength; i++) {
-                    var data = responseBuffer[5 + i];
-                    if (data) {
-                        checksum += data;
-                    }
-                }
-                if (((~checksum + 1) & 0xFF) === packetDataChecksum) {
-                    // res = Buffer.concat([new Buffer([packetLength]), payload]);
-                    res = payload;
-                }
-            }
-        }
-        return res ? {
-            index: [preambleIndex, packetLength + 7],
-            valid: res
-        } : {
+        var res = {
             index: [-1, 0],
             valid: null
         };
-        // return res ? [preambleIndex, packetLength + 7] : [-1, 0];
+        var preambleIndex = indexOfBuffer(buffer, PREAMBLE);
+        if (preambleIndex === -1) {
+            return res;
+        }
+        var responseBuffer = buffer.slice(preambleIndex);
+        var packetLength = responseBuffer[3];
+
+        if (responseBuffer.length < (packetLength + 7) ||
+            responseBuffer[0] !== PN532_PREAMBLE ||
+            responseBuffer[1] !== PN532_STARTCODE1 ||
+            responseBuffer[2] !== PN532_STARTCODE2 ||
+            !checkIntegrity(packetLength, responseBuffer[4])
+            ) {
+            return res;
+        }
+        var payload = responseBuffer.slice(5, 5 + packetLength);
+        var packetDataChecksum = responseBuffer[packetLength + 5];
+
+        if (payload[0] !== (PN532_HOSTTOPN532 + 1) ||
+            payload[1] !== (cmdId + 1) ||
+            !checkIntegrity(payload, packetDataChecksum) ||
+            responseBuffer[packetLength + 6] !== PN532_POSTAMBLE
+            ) {
+            return res;
+        }
+        return {
+            index: [preambleIndex, packetLength + 7],
+            valid: payload
+        };
     },
 
     _genCmd: function (cmd) {
@@ -230,6 +219,18 @@ module.exports = driver({
         clearInterval(this._scanTimer);
     }
 });
+
+function checkIntegrity(data, checksum) {
+    var sum = 0;
+    if (typeof data === 'number') {
+        sum = data;
+    } else {
+        for (var i = 0; i < data.length; i++) {
+            sum += data[i];
+        }
+    }
+    return ((sum + checksum) & 0xFF) === 0;
+}
 
 function indexOfBuffer(buffer, subBuffer) {
     var bufferLength = buffer.length;
