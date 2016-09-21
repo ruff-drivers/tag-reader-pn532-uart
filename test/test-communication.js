@@ -117,7 +117,7 @@ describe('Test for `Communication`', function () {
             }
         }, function (error) {
             if (error) {
-                assert(error.message === 'Response timed out');
+                assert(error.message === 'Response timeout');
 
                 done();
                 return;

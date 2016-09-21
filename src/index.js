@@ -21,9 +21,6 @@ var PN532_HOSTTOPN532 = 0xD4;
 var PN532_MODE_MIFARE_ISO14443A = 0x00;
 
 var PN532_SAM_NORMAL_MODE = 0x01;
-var PN532_SAM_VIRTUAL_CARD = 0x02;
-var PN532_SAM_WIRED_CARD = 0x03;
-var PN532_SAM_DUAL_CARD = 0x04;
 
 var ACK = new Buffer([0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00]);
 var PREAMBLE = new Buffer([0x00, 0x00, 0xFF]);
@@ -114,7 +111,7 @@ var nfc = {
         return cmdBuffer;
     },
 
-    cmdGetFirmwareVersion: function (callback) {
+    _cmdGetFirmwareVersion: function (callback) {
         var dataToSend = this._genCmd([PN532_COMMAND_GETFIRMWAREVERSION]);
         this._comm.pushCmd({
             requestData: dataToSend,
@@ -137,7 +134,7 @@ var nfc = {
         }
     },
 
-    cmdSamConfigNormal: function (callback) {
+    _cmdSamConfigNormal: function (callback) {
         var dataToSend = this._genCmd([
             PN532_COMMAND_SAMCONFIGURATION,
             PN532_SAM_NORMAL_MODE
@@ -150,8 +147,8 @@ var nfc = {
         }, callback);
     },
 
-    cmdReadCardUid: function (callback) {
-        var that = this;
+    _cmdReadTagUid: function (callback) {
+        // var that = this;
         var dataToSend = this._genCmd([
             PN532_COMMAND_INLISTPASSIVETARGET,
             1,
@@ -169,38 +166,39 @@ var nfc = {
                 callback && callback(error);
                 return;
             }
-            var card = {};
+            var tag = {};
+            var uidLength;
             if (responseBuffer) {
-                card.sensRes = responseBuffer.slice(4, 6);
-                card.selRes = responseBuffer.slice(6, 7);
-                card.uidLength = responseBuffer[7];
-                card.uid = responseBuffer.slice(8, 8 + card.uidLength);
-                card.ats = responseBuffer.slice(8 + card.uidLength);
-
-                that.emit('card', card);
+                tag.sensRes = responseBuffer.slice(4, 6);
+                tag.selRes = responseBuffer.slice(6, 7);
+                uidLength = responseBuffer[7];
+                tag.uid = responseBuffer.slice(8, 8 + uidLength);
+                tag.ats = responseBuffer.slice(8 + uidLength);
             }
-            callback && callback(undefined, card);
+            callback && callback(undefined, tag);
         }
     },
 
-    scanCard: function () {
+    _scanTag: function () {
         var that = this;
+        var lastTagUid = null;
         this._scanTimer = setInterval(function () {
-            that.cmdReadCardUid();
+            that._cmdReadTagUid(checkTag);
         }, this._scanInterval);
-    }
-};
 
-Object.defineProperties(nfc, {
-    scanInterval: {
-        get: function () {
-            return this._scanInterval;
-        },
-        set: function (value) {
-            this._scanInterval = value < 500 ? 500 : value;
+        function checkTag(error, tag) {
+            if (error && error.message === 'Response timeout') {
+                lastTagUid = null;
+                return;
+            }
+            var newTagUid = tag.uid.toString('hex');
+            if (lastTagUid !== newTagUid) {
+                lastTagUid = newTagUid;
+                that.emit('tag', tag);
+            }
         }
     }
-});
+};
 
 module.exports = driver({
     attach: function (inputs, context, next) {
@@ -210,8 +208,8 @@ module.exports = driver({
         this._scanInterval = 500;
         var that = this;
         setTimeout(function () {
-            that.cmdSamConfigNormal(next);
-            that.scanCard();
+            that._cmdSamConfigNormal(next);
+            that._scanTag();
         }, 500);
     },
     exports: nfc,

@@ -13,8 +13,8 @@ var Queue = require('ruff-async').Queue;
 
 var State = {
     idle: 0,
-    waitAck: 1,
-    waitResponse: 2
+    waitingAck: 1,
+    waitingResponse: 2
 };
 
 function Communication(port) {
@@ -27,12 +27,7 @@ function Communication(port) {
     this._parseResponse = null;
 
     this._readStream = new ReadStreaming(port);
-    // this._readStream.on('data', this._parseData.bind(this));
-    var that = this;
-    this._readStream.on('data', function (data) {
-        // console.log('uart get nfc data is', data, Date.now());
-        that._parseData(data);
-    });
+    this._readStream.on('data', this._parseData.bind(this));
     this._readStream.on('error', function () {
         throw new Error('UART is crashed');
     });
@@ -51,7 +46,6 @@ Communication.prototype.pushCmd = function (cmdOptions, callback) {
 };
 
 Communication.prototype._processCmd = function (cmdOptions, callback) {
-    // console.log('process cmd', Date.now());
     assert(this._cs === State.idle);
     var cmdData = cmdOptions.requestData;
     var cmdTimeout = cmdOptions.responseTimeout;
@@ -82,10 +76,10 @@ Communication.prototype._consume = function (length) {
 };
 
 Communication.prototype._getResponse = function (timeout, callback) {
-    this._cs = State.waitAck;
+    this._cs = State.waitingAck;
     var that = this;
 
-    var timerHandle = setTimeout(responseDoneCleanup.bind(undefined, new Error('Response timed out')), timeout);
+    var timerHandle = setTimeout(responseDoneCleanup.bind(undefined, new Error('Response timeout')), timeout);
 
     var onResponseDone = responseDoneCleanup.bind(undefined, undefined);
     this.on('responseDone', onResponseDone);
@@ -106,15 +100,15 @@ Communication.prototype._parseData = function (data) {
     }
 
     this._pendingData = Buffer.concat([this._pendingData, data]);
-    if (this._cs === State.waitAck) {
-        // console.log('parse ack');
+    if (this._cs === State.waitingAck) {
+        // console.log('paringse ack');
         var ack = this._parseAck(this._pendingData);
         if (ack[1] > 0) {
             this._consume(ack[0] + ack[1]);
-            this._cs = State.waitResponse;
+            this._cs = State.waitingResponse;
         }
     }
-    if (this._cs === State.waitResponse) {
+    if (this._cs === State.waitingResponse) {
         // console.log('parse resp');
         var response = this._parseResponse(this._pendingData);
         if (response.index[1] > 0) {

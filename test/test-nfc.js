@@ -83,7 +83,7 @@ describe('Driver for nfc', function () {
             callback(undefined, validData);
         });
 
-        nfc.cmdGetFirmwareVersion(function (error, firmware) {
+        nfc._cmdGetFirmwareVersion(function (error, firmware) {
             if (error) {
                 nfc.detach();
                 done(error);
@@ -104,7 +104,7 @@ describe('Driver for nfc', function () {
             callback(new Error('timeout'));
         });
 
-        nfc.cmdGetFirmwareVersion(function (error) {
+        nfc._cmdGetFirmwareVersion(function (error) {
             if (error) {
                 assert.equal(error.message, 'timeout');
                 done();
@@ -114,7 +114,7 @@ describe('Driver for nfc', function () {
         });
     });
 
-    it('should get expected result when invoke command `cmdReadCardUid`', function (done) {
+    it('should get expected result when invoke command `cmdReadTagUid`', function (done) {
         var expectedRequestData = new Buffer([
             PN532_PREAMBLE,
             PN532_STARTCODE1,
@@ -142,33 +142,20 @@ describe('Driver for nfc', function () {
             callback(undefined, validData);
         });
 
-        nfc.on('card', function (card) {
-            assert.deepEqual(card, {
-                sensRes: new Buffer([0, 4]),
-                selRes: new Buffer([8]),
-                uidLength: 4,
-                uid: new Buffer([43, 62, 170, 133]),
-                ats: new Buffer(0)
-            });
-            nfc.detach();
-            done();
-        });
-
-        nfc.cmdReadCardUid(function (error, card) {
+        nfc._cmdReadTagUid(function (error, tag) {
             if (error) {
                 nfc.detach();
                 done(error);
                 return;
             }
 
-            assert.deepEqual(card, {
+            assert.deepEqual(tag, {
                 sensRes: new Buffer([0, 4]),
                 selRes: new Buffer([8]),
-                uidLength: 4,
                 uid: new Buffer([43, 62, 170, 133]),
                 ats: new Buffer(0)
             });
-            // done();
+            done();
         });
     });
 });
