@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/ruff-drivers/cardreader-pn532-uart.svg)](https://travis-ci.org/ruff-drivers/cardreader-pn532-uart)
+[![Build Status](https://travis-ci.org/ruff-drivers/tagreader-pn532-uart.svg)](https://travis-ci.org/ruff-drivers/tagreader-pn532-uart)
 
-# Card(ISO/IEC14443 Type A) reader dirver for Ruff
+# Tag(ISO/IEC14443 Type A) reader dirver for Ruff
 
 NFC chip `PN532` driver with UART interface.
 
@@ -30,25 +30,28 @@ rap device add <device-id>
 Here is the basic usage of this driver.
 
 ```js
-$('#<device-id>').scanInterval = 1000;
-$('#<device-id>').on('card', function (card) {
-    console.log('the uid of card is ', card.uid.toString('hex'));
+$('#<device-id>').on('tag', function (tag) {
+    console.log('the uid of tag is ', tag.uid.toString('hex'));
 });
 ```
 
 ## API References
 
-### Properties
-
-#### `scanInterval`
-
-Set the scan interval of the card reader, the minimal interval cannot be less than 500ms.
-
 ### Events
 
-#### `card`
+#### `tag`
 
-The `card` event is issued when some card, the type of which is `ISO/IEC14443 Type A`,  is around in the card reader.
+The `tag` event is issued when some tag, the type of which is `ISO/IEC14443 Type A`,  is around in the tag reader.
+
+The `tag` event supplies tag information including four fields: `sensRes`, `selRes`, `uid` and `ats`, for example:
+```javascript
+{
+    sensRes: Buffer,
+    selRes: Buffer,
+    uid: Buffer,
+    ats: Buffer
+}
+```
 
 ## Contributing
 
