@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ruff-drivers/tagreader-pn532-uart.svg)](https://travis-ci.org/ruff-drivers/tagreader-pn532-uart)
+[![Build Status](https://travis-ci.org/ruff-drivers/tag-reader-pn532-uart.svg)](https://travis-ci.org/ruff-drivers/tag-reader-pn532-uart)
 
 # Tag(ISO/IEC14443 Type A) reader dirver for Ruff
 
