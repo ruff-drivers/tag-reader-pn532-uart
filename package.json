@@ -1,17 +1,17 @@
 {
-  "name": "cardreader-pn532-uart",
+  "name": "tag-reader-pn532-uart",
   "version": "0.1.0",
-  "description": "Card reader dirver using NXP `pn532` chip",
+  "description": "Tag reader dirver using NXP `pn532` chip",
   "author": "Nanchao Inc.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruff-drivers/cardreader-pn532-uart.git"
+    "url": "git+https://github.com/ruff-drivers/tag-reader-pn532-uart.git"
   },
   "bugs": {
-    "url": "https://github.com/ruff-drivers/cardreader-pn532-uart/issues"
+    "url": "https://github.com/ruff-drivers/tag-reader-pn532-uart/issues"
   },
-  "homepage": "https://github.com/ruff-drivers/cardreader-pn532-uart",
+  "homepage": "https://github.com/ruff-drivers/tag-reader-pn532-uart",
   "keywords": [
     "ruff",
     "driver",
