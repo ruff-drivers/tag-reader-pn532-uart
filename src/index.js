@@ -148,7 +148,6 @@ var nfc = {
     },
 
     _cmdReadTagUid: function (callback) {
-        // var that = this;
         var dataToSend = this._genCmd([
             PN532_COMMAND_INLISTPASSIVETARGET,
             1,

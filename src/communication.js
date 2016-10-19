@@ -101,7 +101,6 @@ Communication.prototype._parseData = function (data) {
 
     this._pendingData = Buffer.concat([this._pendingData, data]);
     if (this._cs === State.waitingAck) {
-        // console.log('paringse ack');
         var ack = this._parseAck(this._pendingData);
         if (ack[1] > 0) {
             this._consume(ack[0] + ack[1]);
@@ -109,7 +108,6 @@ Communication.prototype._parseData = function (data) {
         }
     }
     if (this._cs === State.waitingResponse) {
-        // console.log('parse resp');
         var response = this._parseResponse(this._pendingData);
         if (response.index[1] > 0) {
             this._consume(response.index[0] + response.index[1]);
