@@ -1,3 +1,6 @@
 {
-    "extends": "./node_modules/ruff-standard/eslint-driver.json"
+    "extends": "./node_modules/ruff-standard/eslint-driver.json",
+    "globals": {
+        "uv": true
+    }
 }

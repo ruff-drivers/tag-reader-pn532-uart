@@ -5,5 +5,11 @@
 
 'use strict';
 
-require('./test-communication');
-require('./test-nfc');
+var fs = require('fs');
+var dirs = fs.readdirSync(__dirname);
+
+dirs.filter(function (file) {
+    return /test-/.test(file);
+}).forEach(function (file) {
+    require('./' + file);
+});

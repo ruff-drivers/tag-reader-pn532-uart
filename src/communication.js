@@ -8,7 +8,7 @@
 var assert = require('assert');
 var util = require('util');
 var EventEmitter = require('events');
-var ReadStreaming = require('read-streaming');
+var ReadStreaming = require('./read-streaming');
 var Queue = require('ruff-async').Queue;
 
 var State = {
@@ -35,6 +35,16 @@ function Communication(port) {
 }
 
 util.inherits(Communication, EventEmitter);
+
+Communication.prototype.sendRawData = function (data, callback) {
+    this._port.write(data, function (error) {
+        if (error) {
+            callback && callback(error);
+            return;
+        }
+        callback && callback.apply(undefined, arguments);
+    });
+};
 
 Communication.prototype.pushCmd = function (cmdOptions, callback) {
     assert(cmdOptions.requestData);

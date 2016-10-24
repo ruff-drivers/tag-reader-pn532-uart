@@ -35,9 +35,6 @@
     "rvm": "^0.3.2"
   },
   "ruff": {
-    "dependencies": {
-      "read-streaming": "*"
-    },
     "devDependencies": {
       "t": "^0.1.6"
     }

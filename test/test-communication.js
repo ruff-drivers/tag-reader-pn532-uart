@@ -44,7 +44,7 @@ Uart.prototype.clearTimer = function () {
     clearInterval(this._timer);
 };
 
-describe('Test for `Communication`', function () {
+describe('Test for `Communication` module', function () {
     var uart;
     var comm;
     var dataToSend;
