@@ -8,55 +8,35 @@
 var driver = require('ruff-driver');
 var Communication = require('./communication');
 var createCommands = require('./commands');
+var ScanTag = require('./scan-tag');
 
 module.exports = driver({
     attach: function (inputs, context, next) {
         var that = this;
 
-        this._communication = context.communication || new Communication(inputs['uart']);
-        this._commands = context.commands || createCommands(this._communication);
-
-        uv.update_loop_time(); // work around
+        this._commands = context.commands || createCommands(new Communication(inputs['uart']));
 
         var scanInterval = 500;
+        this._scanTag = new ScanTag(this._commands.readTag, scanInterval);
+        this._scanTag.on('tag', function (tag) {
+            that.emit('tag', tag);
+        });
+
+        uv.update_loop_time(); // workaround
 
         that._commands.samConfigNormal(function (error) {
             if (error) {
                 throw error;
             }
-            that._scanTag(scanInterval);
+            that._scanTag.start();
             next();
         });
     },
 
-    exports: {
-        _scanTag: function (scanInterval) {
-            var that = this;
-            var lastTagUid = null;
-            this._scanTimer = setInterval(function () {
-                that._commands.readTagUid(checkTag);
-            }, scanInterval);
-
-            function checkTag(error, tag) {
-                if (error) {
-                    if (error.message === 'Response timeout') {
-                        lastTagUid = null;
-                        return;
-                    }
-                    throw error;
-                }
-
-                var newTagUid = tag.uid.toString('hex');
-                if (lastTagUid !== newTagUid) {
-                    lastTagUid = newTagUid;
-                    that.emit('tag', tag);
-                }
-            }
-        }
-    },
+    exports: { },
 
     detach: function () {
-        clearInterval(this._scanTimer);
+        this._scanTag.stop();
     }
 });
 

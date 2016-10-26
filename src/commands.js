@@ -109,7 +109,7 @@ function createCommands(communication) {
         });
     };
 
-    commands.readTagUid = function (callback) {
+    commands.readTag = function (callback) {
         var dataToSend = generateCommand([
             PN532_COMMAND_INLISTPASSIVETARGET,
             1,

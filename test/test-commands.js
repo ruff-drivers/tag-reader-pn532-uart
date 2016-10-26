@@ -99,7 +99,7 @@ describe('Test for `commands` module', function () {
         });
     });
 
-    it('should get expected result when invoke command `cmdReadTagUid`', function (done) {
+    it('should get expected result when invoke command `cmdReadTag`', function (done) {
         var expectedRequestData = new Buffer([
             PREAMBLE,
             STARTCODE1,
@@ -127,7 +127,7 @@ describe('Test for `commands` module', function () {
             callback(undefined, validData);
         });
 
-        commands.readTagUid(function (error, tag) {
+        commands.readTag(function (error, tag) {
             if (error) {
                 done(error);
                 return;
