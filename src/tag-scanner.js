@@ -8,15 +8,15 @@
 var EventEmitter = require('events');
 var util = require('util');
 
-function ScanTag(readTag, scanInterval) {
+function TagScanner(readTag, scanInterval) {
     EventEmitter.call(this);
     this._readTag = readTag;
     this._scanInterval = scanInterval;
     this._scanTimer = null;
 }
-util.inherits(ScanTag, EventEmitter);
+util.inherits(TagScanner, EventEmitter);
 
-ScanTag.prototype.start = function () {
+TagScanner.prototype.start = function () {
     var that = this;
     var lastTagUid = null;
     this._scanTimer = setInterval(function () {
@@ -40,9 +40,9 @@ ScanTag.prototype.start = function () {
     }
 };
 
-ScanTag.prototype.stop = function () {
+TagScanner.prototype.stop = function () {
     clearInterval(this._scanTimer);
     this._scanTimer = null;
 };
 
-module.exports = ScanTag;
+module.exports = TagScanner;

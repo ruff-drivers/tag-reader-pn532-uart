@@ -11,32 +11,32 @@ var mock = require('ruff-mock');
 var anyMock = mock.anyMock;
 var whenever = mock.whenever;
 
-var ScanTag = require('../src/scan-tag');
+var TagScanner = require('../src/tag-scanner');
 
 require('t');
 
-describe('Test for `ScanTag`', function () {
+describe('Test for `TagScanner`', function () {
     it('should get expected tag when scan started', function (done) {
         var commands = anyMock();
         var scanInterval = 100;
-        var scanTag = new ScanTag(commands.readTag, scanInterval);
+        var tagScanner = new TagScanner(commands.readTag, scanInterval);
         var tagUid = new Buffer([0, 1, 2, 3]);
         whenever(commands).readTag(Function).then(function (callback) {
             callback(undefined, {
                 uid: tagUid
             });
         });
-        scanTag.on('tag', function (tag) {
+        tagScanner.on('tag', function (tag) {
             assert.deepEqual(tag.uid, tagUid);
             done();
         });
-        scanTag.start();
+        tagScanner.start();
     });
 
     it('should not get any tag when scan stopped', function (done) {
         var commands = anyMock();
         var scanInterval = 100;
-        var scanTag = new ScanTag(commands.readTag, scanInterval);
+        var tagScanner = new TagScanner(commands.readTag, scanInterval);
 
         var stopped = false;
         var tagUid = 0;
@@ -45,12 +45,12 @@ describe('Test for `ScanTag`', function () {
                 uid: new Buffer([tagUid++])
             });
         });
-        scanTag.on('tag', function () {
+        tagScanner.on('tag', function () {
             assert(!stopped);
         });
-        scanTag.start();
+        tagScanner.start();
         setTimeout(function () {
-            scanTag.stop();
+            tagScanner.stop();
             stopped = true;
             setTimeout(done, 500);
         }, 500);

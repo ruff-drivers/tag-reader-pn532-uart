@@ -8,27 +8,26 @@
 var driver = require('ruff-driver');
 var Communication = require('./communication');
 var createCommands = require('./commands');
-var ScanTag = require('./scan-tag');
+var TagScanner = require('./tag-scanner');
 
 module.exports = driver({
     attach: function (inputs, context, next) {
         var that = this;
 
-        this._commands = context.commands || createCommands(new Communication(inputs['uart']));
+        var commands = context.commands || createCommands(new Communication(inputs['uart']));
 
-        var scanInterval = 500;
-        this._scanTag = new ScanTag(this._commands.readTag, scanInterval);
-        this._scanTag.on('tag', function (tag) {
+        this._tagScanner = new TagScanner(commands.readTag, 500);
+        this._tagScanner.on('tag', function (tag) {
             that.emit('tag', tag);
         });
 
         uv.update_loop_time(); // workaround
 
-        that._commands.samConfigNormal(function (error) {
+        commands.samConfigNormal(function (error) {
             if (error) {
                 throw error;
             }
-            that._scanTag.start();
+            that._tagScanner.start();
             next();
         });
     },
@@ -36,7 +35,7 @@ module.exports = driver({
     exports: { },
 
     detach: function () {
-        this._scanTag.stop();
+        this._tagScanner.stop();
     }
 });
 

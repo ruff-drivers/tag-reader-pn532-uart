@@ -45,7 +45,6 @@ parser.responseParser = function (cmdId, buffer) {
     var payload = responseBuffer.slice(5, 5 + packetLength);
     var packetDataChecksum = responseBuffer[packetLength + 5];
 
-    // if (payload[0] !== (PN532_HOSTTOPN532 + 1) ||
     if (payload[0] !== PN532_PN532TOHOST ||
         payload[1] !== (cmdId + 1) ||
         !checkIntegrity(payload, packetDataChecksum) ||
