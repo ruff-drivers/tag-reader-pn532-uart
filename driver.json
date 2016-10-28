@@ -1,5 +1,5 @@
 {
-    "models": ["pn532"],
+    "models": ["df-nfc-v1"],
     "inputs": {
         "uart": {
             "type": "uart",
