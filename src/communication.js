@@ -8,7 +8,6 @@
 var assert = require('assert');
 var util = require('util');
 var EventEmitter = require('events');
-var ReadStreaming = require('./read-streaming');
 var Queue = require('ruff-async').Queue;
 
 var State = {
@@ -26,12 +25,10 @@ function Communication(port) {
     this._parseAck = null; // return index and length
     this._parseResponse = null;
 
-    this._readStream = new ReadStreaming(port);
-    this._readStream.on('data', this._parseData.bind(this));
-    this._readStream.on('error', function () {
+    this._port.on('data', this._parseData.bind(this));
+    this._port.on('error', function () {
         throw new Error('UART is crashed');
     });
-    this._readStream.start();
 }
 
 util.inherits(Communication, EventEmitter);
