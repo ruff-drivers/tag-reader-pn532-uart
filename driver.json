@@ -1,5 +1,5 @@
 {
-    "models": ["df-nfc-v1"],
+    "models": [],
     "inputs": {
         "uart": {
             "type": "uart",
