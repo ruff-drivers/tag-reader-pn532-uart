@@ -10,7 +10,7 @@ NFC chip `PN532` driver with UART interface.
 
 ## Supported Models
 
-- [df-nfc-v1](https://rap.ruff.io/devices/df-nfc-v1)
+- [PN532](https://rap.ruff.io/devices/PN532)
 
 ## Installing
 
@@ -22,7 +22,7 @@ Execute following command and enter a **supported model** to install.
 rap device add <device-id>
 
 # Then enter a supported model, for example:
-# ? model: df-nfc-v1
+# ? model: PN532
 ```
 
 ## Usage
