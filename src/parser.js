@@ -11,7 +11,6 @@ var PN532_PN532TOHOST = Pn532.PN532TOHOST;
 
 var helper = require('./helper');
 var checkIntegrity = helper.checkIntegrity;
-var indexOfBuffer = helper.indexOfBuffer;
 
 var parser = Object.create(null);
 
@@ -19,7 +18,7 @@ parser.ackParser = function (buffer) {
     if (buffer.length < ACKFRAME.length) {
         return [-1, 0];
     }
-    return [indexOfBuffer(buffer, ACKFRAME), ACKFRAME.length];
+    return [buffer.indexOf(ACKFRAME), ACKFRAME.length];
 };
 
 parser.responseParser = function (cmdId, buffer) {
@@ -27,7 +26,7 @@ parser.responseParser = function (cmdId, buffer) {
         index: [-1, 0],
         valid: null
     };
-    var preambleIndex = indexOfBuffer(buffer, PREAMBLE);
+    var preambleIndex = buffer.indexOf(PREAMBLE);
     if (preambleIndex === -1) {
         return res;
     }
