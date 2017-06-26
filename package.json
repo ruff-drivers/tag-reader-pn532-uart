@@ -1,6 +1,6 @@
 {
   "name": "tag-reader-pn532-uart",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Tag reader dirver using NXP `pn532` chip",
   "author": "Nanchao Inc.",
   "license": "MIT",
